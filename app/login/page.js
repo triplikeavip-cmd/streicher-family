@@ -12,6 +12,21 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
+  const handleGoogleLogin = async () => {
+    if (familyPassword !== process.env.NEXT_PUBLIC_FAMILY_PASSWORD) {
+      setError('Enter the family password first.')
+      return
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    })
+    if (error) setError(error.message)
+  }
+
   const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
@@ -97,6 +112,27 @@ export default function LoginPage() {
           className="w-full bg-family-gold text-family-black font-semibold py-2.5 rounded-lg hover:bg-family-goldSoft transition-colors duration-200"
         >
           {loading ? 'Signing in...' : 'Sign In'}
+        </button>
+
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-family-border" />
+          <span className="text-xs text-family-muted uppercase tracking-wide">or</span>
+          <div className="flex-1 h-px bg-family-border" />
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={!familyPassword}
+          className="w-full border border-family-border text-family-white font-medium py-2.5 rounded-lg hover:border-family-gold/40 transition flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92a8.78 8.78 0 002.68-6.62z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.87-3.04.87a5.28 5.28 0 01-4.96-3.65H1.02v2.33A9 9 0 009 18z"/>
+            <path fill="#FBBC05" d="M4.04 10.78A5.4 5.4 0 013.76 9c0-.62.11-1.22.28-1.78V4.89H1.02A9 9 0 000 9c0 1.45.35 2.83 1.02 4.11l3.02-2.33z"/>
+            <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0A9 9 0 001.02 4.89l3.02 2.33A5.28 5.28 0 019 3.58z"/>
+          </svg>
+          Sign in with Google
         </button>
       </form>
     </div>
