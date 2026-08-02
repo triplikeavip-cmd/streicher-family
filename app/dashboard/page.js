@@ -51,6 +51,14 @@ export default function Dashboard() {
     router.push('/login')
   }
 
+  const deleteEvent = async (id) => {
+    if (!confirm('Delete this event? This cannot be undone.')) return
+    const { error } = await supabase.from('events').delete().eq('id', id)
+    if (!error) {
+      setEvents((prev) => prev.filter((e) => e.id !== id))
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-family-black">
@@ -168,18 +176,26 @@ export default function Dashboard() {
             return (
               <div
                 key={event.id}
-                className={`bg-family-card border border-family-border border-l-4 ${meta.border} rounded-xl p-4 flex items-center gap-4 hover:border-family-gold/40 transition`}
+                className={`bg-family-card border border-family-border border-l-4 ${meta.border} rounded-xl p-4 flex items-center justify-between gap-4 hover:border-family-gold/40 transition`}
               >
-                <span className="text-2xl">{meta.icon}</span>
-                <div>
-                  <p className="font-semibold text-family-white">{event.title}</p>
-                  <p className="text-sm text-family-muted">
-                    {meta.label} • {new Date(event.event_date).toLocaleDateString()}
-                  </p>
-                  <p className="text-xs text-family-gold/70 mt-0.5">
-                    {toHebrewDate(event.event_date)}
-                  </p>
+                <div className="flex items-center gap-4">
+                  <span className="text-2xl">{meta.icon}</span>
+                  <div>
+                    <p className="font-semibold text-family-white">{event.title}</p>
+                    <p className="text-sm text-family-muted">
+                      {meta.label} • {new Date(event.event_date).toLocaleDateString()}
+                    </p>
+                    <p className="text-xs text-family-gold/70 mt-0.5">
+                      {toHebrewDate(event.event_date)}
+                    </p>
+                  </div>
                 </div>
+                <button
+                  onClick={() => deleteEvent(event.id)}
+                  className="text-xs text-red-400 border border-red-500/40 px-2 py-1 rounded-lg hover:bg-red-500/10 transition shrink-0"
+                >
+                  Delete
+                </button>
               </div>
             )
           })}
