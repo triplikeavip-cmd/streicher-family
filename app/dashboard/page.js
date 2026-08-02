@@ -198,7 +198,17 @@ export default function Dashboard() {
                 <div className="flex items-center gap-4">
                   <span className="text-2xl">{meta.icon}</span>
                   <div>
-                    <p className="font-semibold text-family-white">{event.title}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-family-white">{event.title}</p>
+                      <span className="text-xs bg-family-gold/10 text-family-gold px-2 py-0.5 rounded-full">
+                        {(() => {
+                          const diffDays = Math.round((event.nextOccurrence - today) / (1000 * 60 * 60 * 24))
+                          if (diffDays === 0) return 'Today'
+                          if (diffDays === 1) return 'Tomorrow'
+                          return `In ${diffDays} days`
+                        })()}
+                      </span>
+                    </div>
                     {event.event_type === 'birthday' ? (
                       <>
                         <p className="text-sm text-family-muted">
