@@ -105,9 +105,17 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <h2 className="text-sm font-semibold tracking-wide uppercase text-family-muted mb-4">
-          Upcoming
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-sm font-semibold tracking-wide uppercase text-family-muted">
+            Upcoming
+          </h2>
+          <button
+            onClick={() => router.push('/events/new')}
+            className="text-sm bg-family-gold text-family-black font-semibold px-4 py-2 rounded-lg hover:bg-family-goldSoft transition-colors"
+          >
+            + Add Event
+          </button>
+        </div>
 
         {upcoming.length === 0 && (
           <p className="text-family-muted">Nothing coming up in the next 60 days.</p>
