@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { toHebrewDate } from '@/lib/hebrewDate'
 
 export default function Dashboard() {
   const [member, setMember] = useState(null)
@@ -139,6 +140,9 @@ export default function Dashboard() {
                   <p className="font-semibold text-family-white">{event.title}</p>
                   <p className="text-sm text-family-muted">
                     {meta.label} • {new Date(event.event_date).toLocaleDateString()}
+                  </p>
+                  <p className="text-xs text-family-gold/70 mt-0.5">
+                    {toHebrewDate(event.event_date)}
                   </p>
                 </div>
               </div>
