@@ -52,23 +52,22 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-family-cream">
-        <p className="text-family-deep">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-family-black">
+        <p className="text-family-muted">Loading...</p>
       </div>
     )
   }
 
   if (!member) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-family-cream px-4 text-center">
-        <p className="text-family-deep max-w-sm">
+      <div className="min-h-screen flex items-center justify-center bg-family-black px-4 text-center">
+        <p className="text-family-muted max-w-sm">
           Your account is waiting for approval from a family admin. Check back soon!
         </p>
       </div>
     )
   }
 
-  // Filter to upcoming events in the next 60 days (simple version for now)
   const today = new Date()
   const upcoming = events.filter((e) => {
     const eventDate = new Date(e.event_date)
@@ -77,38 +76,53 @@ export default function Dashboard() {
     return diffDays >= -1 && diffDays <= 60
   })
 
+  const eventIcon = (type) => {
+    if (type === 'birthday') return '🎂'
+    if (type === 'anniversary') return '💍'
+    if (type === 'simcha') return '✨'
+    return '📌'
+  }
+
   return (
-    <div className="min-h-screen bg-family-cream px-4 py-8 md:px-10">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-family-deep">
-            Welcome, {member.full_name.split(' ')[0]}
-          </h1>
+    <div className="min-h-screen bg-family-black px-4 py-10 md:px-10 relative overflow-hidden">
+      <div className="absolute w-[500px] h-[500px] bg-family-gold/5 rounded-full blur-[140px] top-0 left-1/2 -translate-x-1/2" />
+
+      <div className="max-w-3xl mx-auto relative z-10">
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <p className="text-family-gold text-xs font-semibold tracking-[0.2em] uppercase mb-1">
+              Streicher Family
+            </p>
+            <h1 className="text-2xl md:text-3xl font-bold text-family-white">
+              Welcome, {member.full_name.split(' ')[0]}
+            </h1>
+          </div>
           <button
             onClick={handleLogout}
-            className="text-sm text-family-deep underline"
+            className="text-sm text-family-muted hover:text-family-gold transition"
           >
             Log out
           </button>
         </div>
 
-        <h2 className="text-lg font-semibold text-family-deep mb-4">
+        <h2 className="text-sm font-semibold tracking-wide uppercase text-family-muted mb-4">
           Upcoming
         </h2>
 
         {upcoming.length === 0 && (
-          <p className="text-family-deep opacity-70">Nothing coming up in the next 60 days.</p>
+          <p className="text-family-muted">Nothing coming up in the next 60 days.</p>
         )}
 
         <div className="space-y-3">
           {upcoming.map((event) => (
             <div
               key={event.id}
-              className="bg-white rounded-xl shadow-sm p-4 flex items-center justify-between"
+              className="bg-family-card border border-family-border rounded-xl p-4 flex items-center gap-4 hover:border-family-gold/40 transition"
             >
+              <span className="text-2xl">{eventIcon(event.event_type)}</span>
               <div>
-                <p className="font-semibold text-family-deep">{event.title}</p>
-                <p className="text-sm text-family-deep opacity-60 capitalize">
+                <p className="font-semibold text-family-white">{event.title}</p>
+                <p className="text-sm text-family-muted capitalize">
                   {event.event_type} • {new Date(event.event_date).toLocaleDateString()}
                 </p>
               </div>
