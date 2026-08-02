@@ -193,22 +193,23 @@ export default function Dashboard() {
             return (
               <div
                 key={event.id}
-                className={`bg-family-card border border-family-border border-l-4 ${meta.border} rounded-xl p-4 flex items-center justify-between gap-4 hover:border-family-gold/40 transition`}
+                className={`bg-family-card border border-family-border border-l-4 ${meta.border} rounded-xl p-4 hover:border-family-gold/40 transition`}
               >
-                <div className="flex items-center gap-4">
-                  <span className="text-2xl">{meta.icon}</span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-family-white">{event.title}</p>
-                      <span className="text-xs bg-family-gold/10 text-family-gold px-2 py-0.5 rounded-full">
-                        {(() => {
-                          const diffDays = Math.round((event.nextOccurrence - today) / (1000 * 60 * 60 * 24))
-                          if (diffDays === 0) return 'Today'
-                          if (diffDays === 1) return 'Tomorrow'
-                          return `In ${diffDays} days`
-                        })()}
-                      </span>
-                    </div>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xl shrink-0">{meta.icon}</span>
+                    <p className="font-semibold text-family-white truncate">{event.title}</p>
+                  </div>
+                  <span className="text-xs bg-family-gold/10 text-family-gold px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">
+                    {(() => {
+                      const diffDays = Math.round((event.nextOccurrence - today) / (1000 * 60 * 60 * 24))
+                      if (diffDays === 0) return 'Today'
+                      if (diffDays === 1) return 'Tomorrow'
+                      return `In ${diffDays}d`
+                    })()}
+                  </span>
+                </div>
+                <div className="pl-7">
                     {event.event_type === 'birthday' ? (
                       <>
                         <p className="text-sm text-family-muted">
@@ -232,7 +233,7 @@ export default function Dashboard() {
                 </div>
                 <button
                   onClick={() => deleteEvent(event.id)}
-                  className="text-xs text-red-400 border border-red-500/40 px-2 py-1 rounded-lg hover:bg-red-500/10 transition shrink-0"
+                  className="text-xs text-red-400 border border-red-500/40 px-2 py-1 rounded-lg hover:bg-red-500/10 transition mt-3"
                 >
                   Delete
                 </button>

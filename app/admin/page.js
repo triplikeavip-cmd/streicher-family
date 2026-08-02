@@ -122,21 +122,21 @@ export default function AdminPage() {
             </h2>
             <div className="space-y-3 mb-8">
               {pending.map((m) => (
-                <div key={m.id} className="bg-family-card border border-family-border rounded-xl p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-family-white">{m.full_name}</p>
-                    <p className="text-sm text-family-muted">{m.email}</p>
+                <div key={m.id} className="bg-family-card border border-family-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-family-white truncate">{m.full_name}</p>
+                    <p className="text-sm text-family-muted truncate">{m.email}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 shrink-0">
                     <button
                       onClick={() => approveMember(m.id)}
-                      className="text-sm bg-family-gold text-family-black font-semibold px-3 py-1.5 rounded-lg hover:bg-family-goldSoft transition-colors"
+                      className="flex-1 sm:flex-none text-sm bg-family-gold text-family-black font-semibold px-3 py-1.5 rounded-lg hover:bg-family-goldSoft transition-colors"
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => removeMember(m.id)}
-                      className="text-sm border border-red-500/40 text-red-400 px-3 py-1.5 rounded-lg hover:bg-red-500/10 transition"
+                      className="flex-1 sm:flex-none text-sm border border-red-500/40 text-red-400 px-3 py-1.5 rounded-lg hover:bg-red-500/10 transition"
                     >
                       Reject
                     </button>
@@ -152,23 +152,23 @@ export default function AdminPage() {
         </h2>
         <div className="space-y-3">
           {approved.map((m) => (
-            <div key={m.id} className="bg-family-card border border-family-border rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-family-white">
+            <div key={m.id} className="bg-family-card border border-family-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-family-white truncate">
                   {m.full_name} {m.role === 'admin' && <span className="text-family-gold text-xs ml-1">(Admin)</span>}
                 </p>
-                <p className="text-sm text-family-muted">{m.email}</p>
+                <p className="text-sm text-family-muted truncate">{m.email}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 shrink-0">
                 <button
                   onClick={() => toggleAdmin(m.id, m.role)}
-                  className="text-sm border border-family-border text-family-muted px-3 py-1.5 rounded-lg hover:border-family-gold/40 hover:text-family-gold transition"
+                  className="flex-1 sm:flex-none text-sm border border-family-border text-family-muted px-3 py-1.5 rounded-lg hover:border-family-gold/40 hover:text-family-gold transition whitespace-nowrap"
                 >
                   {m.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
                 </button>
                 <button
                   onClick={() => removeMember(m.id)}
-                  className="text-sm border border-red-500/40 text-red-400 px-3 py-1.5 rounded-lg hover:bg-red-500/10 transition"
+                  className="flex-1 sm:flex-none text-sm border border-red-500/40 text-red-400 px-3 py-1.5 rounded-lg hover:bg-red-500/10 transition"
                 >
                   Remove
                 </button>

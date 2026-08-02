@@ -109,14 +109,14 @@ export default function CalendarPage() {
   return (
     <div className="min-h-screen bg-family-black px-4 py-10 md:px-10">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <button onClick={() => router.push('/dashboard')} className="text-sm text-family-muted hover:text-family-gold transition">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+          <button onClick={() => router.push('/dashboard')} className="text-sm text-family-muted hover:text-family-gold transition text-left">
             ← Dashboard
           </button>
-          <h1 className="text-xl md:text-2xl font-bold text-family-white">{monthName}</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-family-white text-center order-first sm:order-none">{monthName}</h1>
           <button
             onClick={() => router.push('/events/new')}
-            className="text-sm bg-family-gold text-family-black font-semibold px-4 py-2 rounded-lg hover:bg-family-goldSoft transition-colors"
+            className="text-sm bg-family-gold text-family-black font-semibold px-4 py-2 rounded-lg hover:bg-family-goldSoft transition-colors sm:w-auto w-full"
           >
             + Add Event
           </button>
@@ -131,7 +131,7 @@ export default function CalendarPage() {
           <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
         </div>
 
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {cells.map((day, i) => {
             if (!day) return <div key={i} />
             const dayEvents = eventsForDay(day)
@@ -144,7 +144,7 @@ export default function CalendarPage() {
               <button
                 key={i}
                 onClick={() => setSelectedDay({ day, events: dayEvents, holidays: dayHolidays, date: thisDate })}
-                className={`aspect-square rounded-lg border p-1 text-left flex flex-col overflow-hidden ${
+                className={`aspect-square rounded-lg border p-0.5 sm:p-1 text-left flex flex-col overflow-hidden ${
                   isToday ? 'border-family-gold bg-family-gold/5' : 'border-family-border bg-family-card'
                 } hover:border-family-gold/40 transition`}
               >
