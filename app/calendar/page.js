@@ -147,24 +147,32 @@ export default function CalendarPage() {
                 </div>
                 <span className="text-[9px] text-family-muted leading-tight">{hebrewDayLabel(day)}</span>
 
-                {photosEvents.length > 0 ? (
-                  <div className={`mt-auto grid gap-0.5 ${photosEvents.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                {photosEvents.length > 0 && (
+                  <div className={`grid gap-0.5 ${photosEvents.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
                     {photosEvents.slice(0, 4).map((e, idx) => (
-                      <img
-                        key={idx}
-                        src={e.photo_url}
-                        alt={e.title}
-                        className="w-full aspect-square object-cover rounded"
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-0.5 mt-auto">
-                    {dayEvents.slice(0, 4).map((e, idx) => (
-                      <span key={idx} className={`w-1.5 h-1.5 rounded-full ${EVENT_META[e.event_type]?.dot || 'bg-gray-400'}`} />
+                      <div key={idx} className="relative">
+                        <img
+                          src={e.photo_url}
+                          alt={e.title}
+                          className="w-full aspect-square object-cover rounded"
+                        />
+                        <span className={`absolute bottom-0 right-0 w-1.5 h-1.5 rounded-full ${EVENT_META[e.event_type]?.dot || 'bg-gray-400'} ring-1 ring-family-card`} />
+                      </div>
                     ))}
                   </div>
                 )}
+
+                <div className="mt-auto space-y-0.5">
+                  {dayEvents.slice(0, photosEvents.length > 0 ? 1 : 2).map((e, idx) => (
+                    <div key={idx} className="flex items-center gap-1">
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${EVENT_META[e.event_type]?.dot || 'bg-gray-400'}`} />
+                      <span className="text-[8px] text-family-white truncate leading-tight">{e.title}</span>
+                    </div>
+                  ))}
+                  {dayEvents.length > (photosEvents.length > 0 ? 1 : 2) && (
+                    <span className="text-[8px] text-family-muted">+{dayEvents.length - (photosEvents.length > 0 ? 1 : 2)} more</span>
+                  )}
+                </div>
               </button>
             )
           })}
