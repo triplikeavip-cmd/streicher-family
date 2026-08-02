@@ -78,12 +78,24 @@ export default function Dashboard() {
   }
 
   const today = new Date()
-  const upcoming = events.filter((e) => {
-    const eventDate = new Date(e.event_date)
-    const thisYear = new Date(today.getFullYear(), eventDate.getMonth(), eventDate.getDate())
-    const diffDays = (thisYear - today) / (1000 * 60 * 60 * 24)
-    return diffDays >= -1 && diffDays <= 60
-  })
+  today.setHours(0, 0, 0, 0)
+
+  const upcoming = events
+    .map((e) => {
+      const eventDate = new Date(e.event_date)
+      let nextOccurrence = eventDate
+
+      if (e.recurring) {
+        nextOccurrence = new Date(today.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+        if (nextOccurrence < today) {
+          nextOccurrence = new Date(today.getFullYear() + 1, eventDate.getMonth(), eventDate.getDate())
+        }
+      }
+
+      return { ...e, nextOccurrence }
+    })
+    .filter((e) => e.recurring || e.nextOccurrence >= today)
+    .sort((a, b) => a.nextOccurrence - b.nextOccurrence)
 
   const EVENT_META = {
     birthday: { icon: '🎂', label: 'Birthday', border: 'border-l-family-gold' },
@@ -183,10 +195,10 @@ export default function Dashboard() {
                   <div>
                     <p className="font-semibold text-family-white">{event.title}</p>
                     <p className="text-sm text-family-muted">
-                      {meta.label} • {new Date(event.event_date).toLocaleDateString()}
+                      {meta.label} • {event.nextOccurrence.toLocaleDateString()}
                     </p>
                     <p className="text-xs text-family-gold/70 mt-0.5">
-                      {toHebrewDate(event.event_date)}
+                      {toHebrewDate(event.nextOccurrence)}
                     </p>
                   </div>
                 </div>
