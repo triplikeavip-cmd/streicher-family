@@ -76,11 +76,16 @@ export default function Dashboard() {
     return diffDays >= -1 && diffDays <= 60
   })
 
-  const eventIcon = (type) => {
-    if (type === 'birthday') return '🎂'
-    if (type === 'anniversary') return '💍'
-    if (type === 'simcha') return '✨'
-    return '📌'
+  const EVENT_META = {
+    birthday: { icon: '🎂', label: 'Birthday', border: 'border-l-family-gold' },
+    anniversary: { icon: '💍', label: 'Anniversary', border: 'border-l-rose-400' },
+    chasana: { icon: '💐', label: 'Chasana (Wedding)', border: 'border-l-purple-400' },
+    bar_mitzvah: { icon: '📖', label: 'Bar Mitzvah', border: 'border-l-blue-400' },
+    bat_mitzvah: { icon: '🕯️', label: 'Bat Mitzvah', border: 'border-l-pink-400' },
+    bris: { icon: '👶', label: 'Bris', border: 'border-l-green-400' },
+    vort: { icon: '💫', label: 'Vort / Engagement', border: 'border-l-orange-400' },
+    simcha: { icon: '✨', label: 'Simcha', border: 'border-l-teal-400' },
+    other: { icon: '📌', label: 'Other', border: 'border-l-gray-400' },
   }
 
   return (
@@ -122,20 +127,23 @@ export default function Dashboard() {
         )}
 
         <div className="space-y-3">
-          {upcoming.map((event) => (
-            <div
-              key={event.id}
-              className="bg-family-card border border-family-border rounded-xl p-4 flex items-center gap-4 hover:border-family-gold/40 transition"
-            >
-              <span className="text-2xl">{eventIcon(event.event_type)}</span>
-              <div>
-                <p className="font-semibold text-family-white">{event.title}</p>
-                <p className="text-sm text-family-muted capitalize">
-                  {event.event_type} • {new Date(event.event_date).toLocaleDateString()}
-                </p>
+          {upcoming.map((event) => {
+            const meta = EVENT_META[event.event_type] || EVENT_META.other
+            return (
+              <div
+                key={event.id}
+                className={`bg-family-card border border-family-border border-l-4 ${meta.border} rounded-xl p-4 flex items-center gap-4 hover:border-family-gold/40 transition`}
+              >
+                <span className="text-2xl">{meta.icon}</span>
+                <div>
+                  <p className="font-semibold text-family-white">{event.title}</p>
+                  <p className="text-sm text-family-muted">
+                    {meta.label} • {new Date(event.event_date).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>
