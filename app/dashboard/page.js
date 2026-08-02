@@ -136,35 +136,35 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <div className="flex gap-2 mb-10 border-b border-family-border pb-4 flex-wrap">
+        <div className="flex gap-2 mb-10 border-b border-family-border pb-4 overflow-x-auto whitespace-nowrap [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button
             onClick={() => router.push('/dashboard')}
-            className="text-sm bg-family-gold text-family-black font-semibold px-4 py-2 rounded-lg"
+            className="shrink-0 text-sm bg-family-gold text-family-black font-semibold px-4 py-2 rounded-lg"
           >
             Dashboard
           </button>
           <button
             onClick={() => router.push('/calendar')}
-            className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+            className="shrink-0 text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
           >
             Calendar
           </button>
           <button
             onClick={() => router.push('/contacts')}
-            className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+            className="shrink-0 text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
           >
             Contacts
           </button>
           <button
             onClick={() => router.push('/profile')}
-            className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+            className="shrink-0 text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
           >
             My Profile
           </button>
           {member.role === 'admin' && (
             <button
               onClick={() => router.push('/admin')}
-              className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+              className="shrink-0 text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
             >
               Admin
             </button>
@@ -197,7 +197,15 @@ export default function Dashboard() {
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-xl shrink-0">{meta.icon}</span>
+                    {event.related_member_id?.photo_url ? (
+                      <img
+                        src={event.related_member_id.photo_url}
+                        alt={event.related_member_id.full_name}
+                        className="w-8 h-8 rounded-full object-cover border border-family-border shrink-0"
+                      />
+                    ) : (
+                      <span className="text-xl shrink-0">{meta.icon}</span>
+                    )}
                     <p className="font-semibold text-family-white truncate">{event.title}</p>
                   </div>
                   <span className="text-xs bg-family-gold/10 text-family-gold px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">
