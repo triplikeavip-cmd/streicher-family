@@ -27,12 +27,12 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-family-black px-4 text-center relative overflow-hidden">
       {/* Ambient background glows */}
-      <div className="absolute w-[600px] h-[600px] bg-family-gold/10 rounded-full blur-[140px] animate-pulse-slow" />
-      <div className="absolute w-[300px] h-[300px] bg-family-gold/5 rounded-full blur-[100px] top-1/4 left-1/4 animate-float" />
-      <div className="absolute w-[250px] h-[250px] bg-family-gold/5 rounded-full blur-[100px] bottom-1/4 right-1/4 animate-float-delayed" />
+      <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-family-gold/10 rounded-full blur-[100px] md:blur-[140px] animate-pulse-slow" />
+      <div className="absolute w-[180px] h-[180px] md:w-[300px] md:h-[300px] bg-family-gold/5 rounded-full blur-[80px] md:blur-[100px] top-1/4 left-1/4 animate-float" />
+      <div className="absolute w-[150px] h-[150px] md:w-[250px] md:h-[250px] bg-family-gold/5 rounded-full blur-[80px] md:blur-[100px] bottom-1/4 right-1/4 animate-float-delayed" />
 
       {/* Drifting particles */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[...Array(12)].map((_, i) => (
           <span
             key={i}
@@ -61,7 +61,7 @@ export default function LandingPage() {
             Est. Family
           </p>
 
-          <h1 className="text-6xl md:text-8xl font-extrabold text-family-white tracking-tight flex justify-center">
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-extrabold text-family-white tracking-tight flex justify-center flex-wrap px-2">
             {name.split('').map((letter, i) => (
               <span
                 key={i}
