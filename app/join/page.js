@@ -28,11 +28,13 @@ export default function JoinPage() {
       return
     }
 
+    const fullName = user.user_metadata?.full_name || user.user_metadata?.name || user.email
+
     const { error: insertError } = await supabase
       .from('family_members')
       .insert({
         auth_user_id: user.id,
-        full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email,
+        full_name: fullName,
         email: user.email,
         role: 'member',
         approved: false,
@@ -43,6 +45,12 @@ export default function JoinPage() {
       setLoading(false)
       return
     }
+
+    fetch('/api/notify-signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: fullName, email: user.email }),
+    })
 
     router.push('/dashboard')
   }

@@ -39,6 +39,9 @@ export default function AdminPage() {
 
   const approveMember = async (id) => {
     setError('')
+
+    const memberToApprove = members.find((m) => m.id === id)
+
     const { error: updateError } = await supabase
       .from('family_members')
       .update({ approved: true })
@@ -48,6 +51,15 @@ export default function AdminPage() {
       setError(updateError.message)
       return
     }
+
+    if (memberToApprove?.email) {
+      fetch('/api/notify-approved', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: memberToApprove.full_name, email: memberToApprove.email }),
+      })
+    }
+
     loadMembers()
   }
 
