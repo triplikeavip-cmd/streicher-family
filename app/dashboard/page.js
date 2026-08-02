@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { toHebrewDate } from '@/lib/hebrewDate'
+import { toHebrewDate, getNextHebrewAnniversary } from '@/lib/hebrewDate'
 
 export default function Dashboard() {
   const [member, setMember] = useState(null)
@@ -194,12 +194,25 @@ export default function Dashboard() {
                   <span className="text-2xl">{meta.icon}</span>
                   <div>
                     <p className="font-semibold text-family-white">{event.title}</p>
-                    <p className="text-sm text-family-muted">
-                      {meta.label} • {event.nextOccurrence.toLocaleDateString()}
-                    </p>
-                    <p className="text-xs text-family-gold/70 mt-0.5">
-                      {toHebrewDate(event.nextOccurrence)}
-                    </p>
+                    {event.event_type === 'birthday' ? (
+                      <>
+                        <p className="text-sm text-family-muted">
+                          English Birthday • {event.nextOccurrence.toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-family-gold/70 mt-0.5">
+                          Yiddish Birthday • {getNextHebrewAnniversary(event.event_date).toLocaleDateString()} ({toHebrewDate(event.event_date)})
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm text-family-muted">
+                          {meta.label} • {event.nextOccurrence.toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-family-gold/70 mt-0.5">
+                          {toHebrewDate(event.nextOccurrence)}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
                 <button
