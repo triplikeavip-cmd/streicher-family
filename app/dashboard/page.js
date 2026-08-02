@@ -94,7 +94,7 @@ export default function Dashboard() {
       <div className="absolute w-[500px] h-[500px] bg-family-gold/5 rounded-full blur-[140px] top-0 left-1/2 -translate-x-1/2" />
 
       <div className="max-w-3xl mx-auto relative z-10">
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <p className="text-family-gold text-xs font-semibold tracking-[0.2em] uppercase mb-1">
               Streicher Family
@@ -109,6 +109,41 @@ export default function Dashboard() {
           >
             Log out
           </button>
+        </div>
+
+        <div className="flex gap-2 mb-10 border-b border-family-border pb-4 flex-wrap">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="text-sm bg-family-gold text-family-black font-semibold px-4 py-2 rounded-lg"
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={() => router.push('/calendar')}
+            className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+          >
+            Calendar
+          </button>
+          <button
+            onClick={() => router.push('/contacts')}
+            className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+          >
+            Contacts
+          </button>
+          <button
+            onClick={() => router.push('/profile')}
+            className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+          >
+            My Profile
+          </button>
+          {member.role === 'admin' && (
+            <button
+              onClick={() => router.push('/admin')}
+              className="text-sm text-family-muted hover:text-family-gold border border-family-border px-4 py-2 rounded-lg transition"
+            >
+              Admin
+            </button>
+          )}
         </div>
 
         <div className="flex justify-between items-center mb-4">
