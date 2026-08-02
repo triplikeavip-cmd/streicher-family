@@ -230,7 +230,6 @@ export default function Dashboard() {
                       </>
                     )}
                   </div>
-                </div>
                 <button
                   onClick={() => deleteEvent(event.id)}
                   className="text-xs text-red-400 border border-red-500/40 px-2 py-1 rounded-lg hover:bg-red-500/10 transition mt-3"
