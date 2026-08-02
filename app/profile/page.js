@@ -28,20 +28,12 @@ export default function ProfilePage() {
     const member = await requireApproval(router)
     if (!member) return
 
-    const { data } = await supabase
-      .from('family_members')
-      .select('*')
-      .eq('auth_user_id', user.id)
-      .single()
-
-    if (data) {
-      setMemberId(data.id)
-      setFullName(data.full_name || '')
-      setPhone(data.phone || '')
-      setAddress(data.address || '')
-      setBirthday(data.birthday || '')
-      setExistingPhotoUrl(data.photo_url || null)
-    }
+    setMemberId(member.id)
+    setFullName(member.full_name || '')
+    setPhone(member.phone || '')
+    setAddress(member.address || '')
+    setBirthday(member.birthday || '')
+    setExistingPhotoUrl(member.photo_url || null)
 
     setLoading(false)
   }
