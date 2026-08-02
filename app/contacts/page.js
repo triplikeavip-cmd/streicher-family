@@ -8,6 +8,7 @@ export default function ContactsPage() {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [selectedMember, setSelectedMember] = useState(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -64,7 +65,11 @@ export default function ContactsPage() {
 
         <div className="space-y-3">
           {filtered.map((m) => (
-            <div key={m.id} className="bg-family-card border border-family-border rounded-xl p-4 flex items-center gap-4">
+            <button
+              key={m.id}
+              onClick={() => setSelectedMember(m)}
+              className="w-full text-left bg-family-card border border-family-border rounded-xl p-4 flex items-center gap-4 hover:border-family-gold/40 transition"
+            >
               {m.photo_url ? (
                 <img src={m.photo_url} alt={m.full_name} className="w-14 h-14 rounded-full object-cover border border-family-border" />
               ) : (
@@ -74,27 +79,72 @@ export default function ContactsPage() {
               )}
               <div className="flex-1">
                 <p className="font-semibold text-family-white">{m.full_name}</p>
-                {m.phone && (
-                  <a href={`tel:${m.phone}`} className="block text-sm text-family-muted hover:text-family-gold transition">
-                    📞 {m.phone}
-                  </a>
-                )}
-                {m.email && (
-                  <a href={`mailto:${m.email}`} className="block text-sm text-family-muted hover:text-family-gold transition">
-                    ✉️ {m.email}
-                  </a>
-                )}
-                {m.address && (
-                  <p className="text-sm text-family-muted">📍 {m.address}</p>
-                )}
+                {m.phone && <p className="text-sm text-family-muted">📞 {m.phone}</p>}
               </div>
-            </div>
+            </button>
           ))}
 
           {filtered.length === 0 && (
             <p className="text-family-muted text-center">No family members found.</p>
           )}
         </div>
+
+        {selectedMember && (
+          <div
+            className="fixed inset-0 bg-black/60 flex items-center justify-center px-4 z-50"
+            onClick={() => setSelectedMember(null)}
+          >
+            <div
+              className="bg-family-card border border-family-border rounded-2xl p-6 w-full max-w-sm"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-4">
+                  {selectedMember.photo_url ? (
+                    <img src={selectedMember.photo_url} alt={selectedMember.full_name} className="w-20 h-20 rounded-full object-cover border border-family-border" />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-family-charcoal border border-family-border flex items-center justify-center text-family-gold font-bold text-2xl">
+                      {selectedMember.full_name?.[0]}
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-bold text-family-white text-lg">{selectedMember.full_name}</p>
+                    {selectedMember.role === 'admin' && (
+                      <p className="text-family-gold text-xs">Admin</p>
+                    )}
+                  </div>
+                </div>
+                <button onClick={() => setSelectedMember(null)} className="text-family-muted hover:text-family-gold text-sm">
+                  Close
+                </button>
+              </div>
+
+              <div className="space-y-2 mt-4">
+                {selectedMember.phone && (
+                  <a href={`tel:${selectedMember.phone}`} className="block text-sm text-family-white hover:text-family-gold transition">
+                    📞 {selectedMember.phone}
+                  </a>
+                )}
+                {selectedMember.email && (
+                  <a href={`mailto:${selectedMember.email}`} className="block text-sm text-family-white hover:text-family-gold transition">
+                    ✉️ {selectedMember.email}
+                  </a>
+                )}
+                {selectedMember.address && (
+                  <p className="text-sm text-family-white">📍 {selectedMember.address}</p>
+                )}
+                {selectedMember.birthday && (
+                  <p className="text-sm text-family-white">
+                    🎂 {new Date(selectedMember.birthday).toLocaleDateString()}
+                  </p>
+                )}
+                {!selectedMember.phone && !selectedMember.email && !selectedMember.address && !selectedMember.birthday && (
+                  <p className="text-sm text-family-muted">No additional info yet.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

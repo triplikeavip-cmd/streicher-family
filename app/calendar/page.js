@@ -87,6 +87,15 @@ export default function CalendarPage() {
   const goToPrevMonth = () => setCurrentDate(new Date(year, month - 1, 1))
   const goToNextMonth = () => setCurrentDate(new Date(year, month + 1, 1))
 
+  const deleteEvent = async (id) => {
+    if (!confirm('Delete this event? This cannot be undone.')) return
+    const { error } = await supabase.from('events').delete().eq('id', id)
+    if (!error) {
+      setEvents((prev) => prev.filter((e) => e.id !== id))
+      setSelectedDay((prev) => prev ? { ...prev, events: prev.events.filter((e) => e.id !== id) } : prev)
+    }
+  }
+
   const cells = []
   for (let i = 0; i < startWeekday; i++) cells.push(null)
   for (let d = 1; d <= daysInMonth; d++) cells.push(d)
@@ -143,9 +152,15 @@ export default function CalendarPage() {
               >
                 <div className="flex justify-between items-start">
                   <span className={`text-sm ${isToday ? 'text-family-gold font-bold' : 'text-family-white'}`}>{day}</span>
-                  {dayHolidays.length > 0 && <span className="text-[10px]">🕎</span>}
                 </div>
                 <span className="text-[9px] text-family-muted leading-tight">{hebrewDayLabel(day)}</span>
+                {dayHolidays.length > 0 && (
+                  <div className="space-y-0.5">
+                    {dayHolidays.slice(0, 2).map((h, idx) => (
+                      <p key={idx} className="text-[8px] text-family-gold leading-tight truncate">🕎 {h.title}</p>
+                    ))}
+                  </div>
+                )}
 
                 {photosEvents.length > 0 && (
                   <div className={`grid gap-0.5 ${photosEvents.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
@@ -208,13 +223,21 @@ export default function CalendarPage() {
               {selectedDay.events.map((e) => {
                 const meta = EVENT_META[e.event_type] || EVENT_META.other
                 return (
-                  <div key={e.id} className="flex items-center gap-3 bg-family-charcoal rounded-lg p-3">
-                    {e.photo_url ? (
-                      <img src={e.photo_url} alt={e.title} className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <span className="text-xl">{meta.icon}</span>
-                    )}
-                    <p className="text-family-white font-medium">{e.title}</p>
+                  <div key={e.id} className="flex items-center justify-between gap-3 bg-family-charcoal rounded-lg p-3">
+                    <div className="flex items-center gap-3">
+                      {e.photo_url ? (
+                        <img src={e.photo_url} alt={e.title} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        <span className="text-xl">{meta.icon}</span>
+                      )}
+                      <p className="text-family-white font-medium">{e.title}</p>
+                    </div>
+                    <button
+                      onClick={() => deleteEvent(e.id)}
+                      className="text-xs text-red-400 border border-red-500/40 px-2 py-1 rounded-lg hover:bg-red-500/10 transition"
+                    >
+                      Delete
+                    </button>
                   </div>
                 )
               })}
