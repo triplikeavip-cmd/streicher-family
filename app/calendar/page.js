@@ -3,18 +3,19 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { HDate } from '@hebcal/core'
 import { toHebrewDate, getHolidaysInRange } from '@/lib/hebrewDate'
 
 const EVENT_META = {
-  birthday: { icon: '🎂', border: 'bg-family-gold' },
-  anniversary: { icon: '💍', border: 'bg-rose-400' },
-  chasana: { icon: '💐', border: 'bg-purple-400' },
-  bar_mitzvah: { icon: '📖', border: 'bg-blue-400' },
-  bat_mitzvah: { icon: '🕯️', border: 'bg-pink-400' },
-  bris: { icon: '👶', border: 'bg-green-400' },
-  vort: { icon: '💫', border: 'bg-orange-400' },
-  simcha: { icon: '✨', border: 'bg-teal-400' },
-  other: { icon: '📌', border: 'bg-gray-400' },
+  birthday: { icon: '🎂', dot: 'bg-family-gold' },
+  anniversary: { icon: '💍', dot: 'bg-rose-400' },
+  chasana: { icon: '💐', dot: 'bg-purple-400' },
+  bar_mitzvah: { icon: '📖', dot: 'bg-blue-400' },
+  bat_mitzvah: { icon: '🕯️', dot: 'bg-pink-400' },
+  bris: { icon: '👶', dot: 'bg-green-400' },
+  vort: { icon: '💫', dot: 'bg-orange-400' },
+  simcha: { icon: '✨', dot: 'bg-teal-400' },
+  other: { icon: '📌', dot: 'bg-gray-400' },
 }
 
 export default function CalendarPage() {
@@ -78,6 +79,11 @@ export default function CalendarPage() {
     })
   }
 
+  const hebrewDayLabel = (day) => {
+    const hd = new HDate(new Date(year, month, day))
+    return `${hd.getDate()} ${hd.getMonthName()}`
+  }
+
   const goToPrevMonth = () => setCurrentDate(new Date(year, month - 1, 1))
   const goToNextMonth = () => setCurrentDate(new Date(year, month + 1, 1))
 
@@ -125,24 +131,40 @@ export default function CalendarPage() {
             const dayHolidays = holidaysForDay(day)
             const thisDate = new Date(year, month, day)
             const isToday = new Date().toDateString() === thisDate.toDateString()
+            const photosEvents = dayEvents.filter((e) => e.photo_url)
 
             return (
               <button
                 key={i}
                 onClick={() => setSelectedDay({ day, events: dayEvents, holidays: dayHolidays, date: thisDate })}
-                className={`aspect-square rounded-lg border p-1.5 text-left flex flex-col ${
+                className={`aspect-square rounded-lg border p-1 text-left flex flex-col overflow-hidden ${
                   isToday ? 'border-family-gold bg-family-gold/5' : 'border-family-border bg-family-card'
                 } hover:border-family-gold/40 transition`}
               >
-                <span className={`text-sm ${isToday ? 'text-family-gold font-bold' : 'text-family-white'}`}>{day}</span>
-                <div className="flex flex-wrap gap-0.5 mt-auto">
-                  {dayEvents.slice(0, 3).map((e, idx) => (
-                    <span key={idx} className={`w-1.5 h-1.5 rounded-full ${EVENT_META[e.event_type]?.border || 'bg-gray-400'}`} />
-                  ))}
-                  {dayHolidays.length > 0 && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                  )}
+                <div className="flex justify-between items-start">
+                  <span className={`text-sm ${isToday ? 'text-family-gold font-bold' : 'text-family-white'}`}>{day}</span>
+                  {dayHolidays.length > 0 && <span className="text-[10px]">🕎</span>}
                 </div>
+                <span className="text-[9px] text-family-muted leading-tight">{hebrewDayLabel(day)}</span>
+
+                {photosEvents.length > 0 ? (
+                  <div className={`mt-auto grid gap-0.5 ${photosEvents.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                    {photosEvents.slice(0, 4).map((e, idx) => (
+                      <img
+                        key={idx}
+                        src={e.photo_url}
+                        alt={e.title}
+                        className="w-full aspect-square object-cover rounded"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-0.5 mt-auto">
+                    {dayEvents.slice(0, 4).map((e, idx) => (
+                      <span key={idx} className={`w-1.5 h-1.5 rounded-full ${EVENT_META[e.event_type]?.dot || 'bg-gray-400'}`} />
+                    ))}
+                  </div>
+                )}
               </button>
             )
           })}
@@ -179,7 +201,11 @@ export default function CalendarPage() {
                 const meta = EVENT_META[e.event_type] || EVENT_META.other
                 return (
                   <div key={e.id} className="flex items-center gap-3 bg-family-charcoal rounded-lg p-3">
-                    <span className="text-xl">{meta.icon}</span>
+                    {e.photo_url ? (
+                      <img src={e.photo_url} alt={e.title} className="w-10 h-10 rounded-full object-cover" />
+                    ) : (
+                      <span className="text-xl">{meta.icon}</span>
+                    )}
                     <p className="text-family-white font-medium">{e.title}</p>
                   </div>
                 )
