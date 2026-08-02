@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { requireApproval } from '@/lib/requireApproval'
 import { HDate } from '@hebcal/core'
 import { toHebrewDate, getHolidaysInRange } from '@/lib/hebrewDate'
 
@@ -31,11 +32,8 @@ export default function CalendarPage() {
   }, [currentDate])
 
   const loadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      router.push('/login')
-      return
-    }
+    const member = await requireApproval(router)
+    if (!member) return
 
     const { data: eventsData } = await supabase
       .from('events')

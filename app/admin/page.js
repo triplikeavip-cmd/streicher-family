@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { requireApproval } from '@/lib/requireApproval'
 
 export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -16,19 +17,10 @@ export default function AdminPage() {
   }, [])
 
   const loadMembers = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      router.push('/login')
-      return
-    }
+    const me = await requireApproval(router)
+    if (!me) return
 
-    const { data: me } = await supabase
-      .from('family_members')
-      .select('role, approved')
-      .eq('auth_user_id', user.id)
-      .single()
-
-    if (!me || me.role !== 'admin' || !me.approved) {
+    if (me.role !== 'admin') {
       setIsAdmin(false)
       setLoading(false)
       return

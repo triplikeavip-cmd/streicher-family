@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { requireApproval } from '@/lib/requireApproval'
 
 export default function ProfilePage() {
   const [memberId, setMemberId] = useState(null)
@@ -24,11 +25,8 @@ export default function ProfilePage() {
   }, [])
 
   const loadProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      router.push('/login')
-      return
-    }
+    const member = await requireApproval(router)
+    if (!member) return
 
     const { data } = await supabase
       .from('family_members')
