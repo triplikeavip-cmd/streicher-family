@@ -13,11 +13,6 @@ export default function LoginPage() {
   const router = useRouter()
 
   const handleGoogleLogin = async () => {
-    if (familyPassword !== process.env.NEXT_PUBLIC_FAMILY_PASSWORD) {
-      setError('Enter the family password first.')
-      return
-    }
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -123,8 +118,7 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={handleGoogleLogin}
-          disabled={!familyPassword}
-          className="w-full border border-family-border text-family-white font-medium py-2.5 rounded-lg hover:border-family-gold/40 transition flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full border border-family-border text-family-white font-medium py-2.5 rounded-lg hover:border-family-gold/40 transition flex items-center justify-center gap-2"
         >
           <svg width="18" height="18" viewBox="0 0 18 18">
             <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92a8.78 8.78 0 002.68-6.62z"/>

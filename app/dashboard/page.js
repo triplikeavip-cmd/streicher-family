@@ -29,7 +29,12 @@ export default function Dashboard() {
       .eq('auth_user_id', user.id)
       .single()
 
-    if (!memberData || !memberData.approved) {
+    if (!memberData) {
+      router.push('/join')
+      return
+    }
+
+    if (!memberData.approved) {
       setLoading(false)
       setMember(null)
       return
