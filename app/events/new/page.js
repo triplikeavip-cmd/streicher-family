@@ -4,6 +4,18 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
+const EVENT_TYPES = [
+  { value: 'birthday', label: 'Birthday', color: 'gold' },
+  { value: 'anniversary', label: 'Anniversary', color: 'rose' },
+  { value: 'chasana', label: 'Chasana (Wedding)', color: 'purple' },
+  { value: 'bar_mitzvah', label: 'Bar Mitzvah', color: 'blue' },
+  { value: 'bat_mitzvah', label: 'Bat Mitzvah', color: 'pink' },
+  { value: 'bris', label: 'Bris', color: 'green' },
+  { value: 'vort', label: 'Vort / Engagement', color: 'orange' },
+  { value: 'simcha', label: 'Simcha (Other)', color: 'teal' },
+  { value: 'other', label: 'Other', color: 'gray' },
+]
+
 export default function NewEvent() {
   const [title, setTitle] = useState('')
   const [eventType, setEventType] = useState('birthday')
@@ -12,6 +24,8 @@ export default function NewEvent() {
   const [notes, setNotes] = useState('')
   const [members, setMembers] = useState([])
   const [relatedMember, setRelatedMember] = useState('')
+  const [photoFile, setPhotoFile] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -29,6 +43,14 @@ export default function NewEvent() {
     setMembers(data || [])
   }
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setPhotoFile(file)
+      setPhotoPreview(URL.createObjectURL(file))
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -41,6 +63,31 @@ export default function NewEvent() {
       .eq('auth_user_id', user.id)
       .single()
 
+    let photoUrl = null
+
+    if (photoFile) {
+      const fileExt = photoFile.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('family-photos')
+        .upload(fileName, photoFile)
+
+      if (uploadError) {
+        setError('Photo upload failed: ' + uploadError.message)
+        setLoading(false)
+        return
+      }
+
+      const { data: urlData } = await supabase.storage
+        .from('family-photos')
+        .createSignedUrl(fileName, 60 * 60 * 24 * 365)
+
+      photoUrl = urlData?.signedUrl || null
+    }
+
+    const typeConfig = EVENT_TYPES.find((t) => t.value === eventType)
+
     const { error: insertError } = await supabase.from('events').insert({
       title,
       event_type: eventType,
@@ -49,6 +96,8 @@ export default function NewEvent() {
       notes,
       related_member_id: relatedMember || null,
       created_by: memberData?.id,
+      photo_url: photoUrl,
+      color: typeConfig?.color || 'gold',
     })
 
     if (insertError) {
@@ -94,10 +143,9 @@ export default function NewEvent() {
           onChange={(e) => setEventType(e.target.value)}
           className="w-full bg-family-charcoal border border-family-border text-family-white rounded-lg px-3 py-2.5 mb-4 focus:outline-none focus:ring-2 focus:ring-family-gold/50 focus:border-family-gold transition"
         >
-          <option value="birthday">Birthday</option>
-          <option value="anniversary">Anniversary</option>
-          <option value="simcha">Simcha</option>
-          <option value="other">Other</option>
+          {EVENT_TYPES.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
         </select>
 
         <label className="block text-xs font-semibold tracking-wide uppercase text-family-muted mb-2">
@@ -124,6 +172,23 @@ export default function NewEvent() {
             <option key={m.id} value={m.id}>{m.full_name}</option>
           ))}
         </select>
+
+        <label className="block text-xs font-semibold tracking-wide uppercase text-family-muted mb-2">
+          Photo (optional)
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoChange}
+          className="w-full text-family-muted text-sm mb-2 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-family-gold file:text-family-black file:font-semibold file:cursor-pointer"
+        />
+        {photoPreview && (
+          <img
+            src={photoPreview}
+            alt="Preview"
+            className="w-full h-40 object-cover rounded-lg mb-4 border border-family-border"
+          />
+        )}
 
         <label className="flex items-center gap-2 mb-4 text-family-white text-sm">
           <input
